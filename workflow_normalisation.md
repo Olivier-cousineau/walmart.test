@@ -12,6 +12,12 @@ Ce workflow standardise les données en français en exposant un schéma stable 
    - Placez le fichier JSON brut (ex. `walmart-2025-12-27.json`) dans le même dossier.
 
 2. **Lancer la normalisation**
+   - **Option A (workflow manuel prêt à lancer)** :
+     ```bash
+     ./workflow_normalisation.sh walmart-2025-12-27.json \
+       walmart-2025-12-27.normalized.json
+     ```
+   - **Option B (appel direct du script)** :
    ```bash
    ./normalize_walmart.py --input walmart-2025-12-27.json \
      --output walmart-2025-12-27.normalized.json
