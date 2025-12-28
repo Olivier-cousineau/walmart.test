@@ -28,8 +28,11 @@ class NormalizedProduct:
     brand: Optional[str]
     badge: Optional[str]
     image_url: Optional[str]
+    image: Optional[str]
     price_current: Optional[float]
     price_original: Optional[float]
+    prix_reduit: Optional[float]
+    prix_regulier: Optional[float]
     savings: Optional[float]
     rating: Optional[float]
     review_count: Optional[int]
@@ -96,8 +99,11 @@ def normalize_item(item: Dict[str, Any]) -> NormalizedProduct:
         brand=item.get("mb1"),
         badge=item.get("w_SrYk"),
         image_url=item.get("absolute src"),
+        image=item.get("absolute src"),
         price_current=parse_decimal(item.get("mr1")),
         price_original=parse_decimal(item.get("strike")),
+        prix_reduit=parse_decimal(item.get("mr1")),
+        prix_regulier=parse_decimal(item.get("strike")),
         savings=parse_decimal(item.get("lh-copy")),
         rating=parse_rating(rating_text),
         review_count=parse_review_count(rating_text, item.get("sans-serif")),
