@@ -1,0 +1,56 @@
+name: Normalize Walmart JSON
+
+on:
+  push:
+    paths:
+      - "**.json"
+      - ".github/workflows/normalize-json.yml"
+  workflow_dispatch:
+    inputs:
+      input_glob:
+        description: "Glob des fichiers JSON à normaliser"
+        required: false
+        default: "**/*.json"
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Normalize JSON files
+        env:
+          INPUT_GLOB: ${{ inputs.input_glob || '**/*.json' }}
+        run: |
+          shopt -s globstar nullglob
+          files=()
+          for file in $INPUT_GLOB; do
+            if [[ "$file" == *.json && "$file" != *.normalized.json && "$file" != */.git/* ]]; then
+              files+=("$file")
+            fi
+          done
+
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No JSON files to normalize."
+            exit 0
+          fi
+
+          for file in "${files[@]}"; do
+            output="${file%.json}.normalized.json"
+            echo "Normalizing $file -> $output"
+            ./normalize_walmart.py --input "$file" --output "$output"
+          done
+
+      - name: Upload normalized JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: normalized-json
+          path: |
+            **/*.normalized.json
